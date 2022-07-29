@@ -11,3 +11,17 @@ module "controllers" {
   network_id      = 2
   security_groups = [0, 101]
 }
+
+module "workers" {
+  source          = "./modules/tf-module-hypercloud-node"
+  group_name      = "SoftIron PE"
+  num             = var.k3s_workers
+  name            = "k3s_worker"
+  cpus            = 1
+  vcpus           = 2
+  memory          = 1024
+  ssh_key         = var.k3s_ssh-key
+  image_id        = 26
+  network_id      = 2
+  security_groups = [0, 101]
+}
