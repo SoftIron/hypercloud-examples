@@ -1,3 +1,6 @@
+[all:vars]
+ansible_ssh_user=root
+
 [control]
 %{ for index, ip in controller_ips ~}
 ${controller_names[index]} ansible_host=${ip}
