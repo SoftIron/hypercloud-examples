@@ -6,7 +6,7 @@ module "controllers" {
   cpus            = 1
   vcpus           = 2
   memory          = 1024
-  ssh_key         = var.k3s_ssh-key
+  ssh_key         = data.http.ssh_keys.*.response_body
   image_id        = 26
   network_id      = 2
   security_groups = [0, 101]
@@ -20,7 +20,7 @@ module "workers" {
   cpus            = 1
   vcpus           = 2
   memory          = 1024
-  ssh_key         = var.k3s_ssh-key
+  ssh_key         = data.http.ssh_keys.*.response_body
   image_id        = 26
   network_id      = 2
   security_groups = [0, 101]
