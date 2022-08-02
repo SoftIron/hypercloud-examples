@@ -1,16 +1,16 @@
 [all:vars]
 ansible_ssh_user=root
 
-[control]
+[k3s_master]
 %{ for index, ip in controller_ips ~}
 ${controller_names[index]} ansible_host=${ip}
 %{ endfor ~}
 
-[worker]
+[k3s_workers]
 %{ for index, ip in worker_ips ~}
 ${worker_names[index]} ansible_host=${ip}
 %{ endfor ~}
 
 [k3s_cluster:children]
-control
-worker
+k3s_master
+k3s_workers
