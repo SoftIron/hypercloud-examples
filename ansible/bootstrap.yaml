@@ -1,0 +1,19 @@
+- name: Bootstrap all nodes
+  hosts: all
+  gather_facts: no
+
+  tasks:
+  - name: Set authorized keys taken from url using lookup
+    ansible.posix.authorized_key:
+      user: "{{ ansible_user }}"
+      state: present
+      key: "{{ lookup('url', 'https://git.softiron.com/' + item + '.keys', split_lines=False) }}"
+    with_items:
+    - dabukalam
+    - rlopez
+    - palvarez
+    - clucasmcmillan
+
+  - name: Set the hostname
+    ansible.builtin.hostname:
+      name: "{{ inventory_hostname | replace('_','-')}}"
