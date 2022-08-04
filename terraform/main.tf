@@ -25,3 +25,17 @@ module "workers" {
   network_id      = 2
   security_groups = [0, 101]
 }
+
+module "loadbalancers" {
+  source          = "./modules/tf-module-hypercloud-node"
+  group_name      = "SoftIron PE"
+  num             = var.k3s_loadbalancers
+  name            = "k3s_loadbalancer"
+  cpus            = 1
+  vcpus           = 2
+  memory          = 1024
+  ssh_key         = data.http.ssh_keys.*.response_body
+  image_id        = 26
+  network_id      = 3
+  security_groups = [0, 110]
+}

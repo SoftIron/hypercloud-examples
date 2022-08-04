@@ -4,6 +4,8 @@ resource "local_file" "inventory" {
     controller_ips = module.controllers.ips,
     controller_names = module.controllers.names
     worker_ips = module.workers.ips,
-    worker_names = module.workers.names
+    worker_names = module.workers.names,
+    lb_ips = module.loadbalancers.ips,
+    lb_names = module.loadbalancers.names
   })
 }

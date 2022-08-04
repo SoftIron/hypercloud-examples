@@ -11,6 +11,11 @@ ${controller_names[index]} ansible_host=${ip}
 ${worker_names[index]} ansible_host=${ip}
 %{ endfor ~}
 
+[k3s_loadbalancers]
+%{ for index, ip in lb_ips ~}
+${lb_names[index]} ansible_host=${ip}
+%{ endfor ~}
+
 [k3s_cluster:children]
 k3s_master
 k3s_workers
