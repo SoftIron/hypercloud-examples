@@ -3,9 +3,9 @@ module "controllers" {
   group_name      = "SoftIron PE"
   num             = var.k3s_controllers
   name            = "k3s_controller"
-  cpus            = 1
-  vcpus           = 2
-  memory          = 1024
+  cpus            = 2
+  vcpus           = 4
+  memory          = 8192
   ssh_key         = data.http.ssh_keys.*.response_body
   image_id        = 26
   network_id      = 2
