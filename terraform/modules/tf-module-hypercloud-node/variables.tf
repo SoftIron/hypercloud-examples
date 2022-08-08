@@ -41,3 +41,18 @@ variable "image_id" {
 variable "network_id" {
   description = "ID of the network top use"
 }
+
+variable "second_nic" {
+  description = "Boolean to attach a second nic. Needed for jump hosts or proxys."
+  default     = false
+}
+
+variable "second_nic_net" {
+  description = "Secondary nic network ID"
+  default     = ""
+}
+
+variable "second_nic_sgs" {
+  description = "Secondary nic security groups"
+  default     = []
+}

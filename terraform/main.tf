@@ -38,4 +38,7 @@ module "loadbalancers" {
   image_id        = 26
   network_id      = 3
   security_groups = [0, 110]
+  second_nic      = true
+  second_nic_net  = 2
+  second_nic_sgs  = [0, 101]
 }

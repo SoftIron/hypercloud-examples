@@ -47,4 +47,11 @@ resource "opennebula_virtual_machine" "instance" {
     security_groups = var.security_groups
   }
 
+  dynamic "nic"{
+    for_each = var.second_nic == true ? [{net_id=var.second_nic_net, net_sgs=var.second_nic_sgs}] : []
+    content {
+      network_id    = nic.value["net_id"]
+      security_groups = nic.value["net_sgs"]
+    }
+  }
 }
