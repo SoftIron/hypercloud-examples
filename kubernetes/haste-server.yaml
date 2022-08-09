@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: haste-server
+spec:
+  selector:
+    matchLabels:
+      app: haste-server
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: haste-server
+    spec:
+      containers:
+      - name: haste-server
+        image: ghcr.io/palvarez89/haste-server:s3-and-ui
+        env:
+        - name: STORAGE_TYPE
+          value: "amazon-s3"
+        - name: STORAGE_AWS_ENDPOINT
+          value: "http://hypercloud.softiron.com:7480"
+        - name: STORAGE_AWS_BUCKET
+          value: "haste"
+        - name: STORAGE_AWS_KEY_ID
+          value: "89WTX1ZYN73TN64S94UC"
+        - name: STORAGE_AWS_KEY_SECRET
+          value: "wOy8x0PDVUmZjSlOeipKtQqxQ2jBYrQrZcNadqNE"
+        - name: STORAGE_AWS_PATH_STYLE
+          value: "true"
+        ports:
+        - containerPort: 7777
+        imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: haste-server
+  namespace: default
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 7777
+  selector:
+    app: haste-server
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: haste-server-ingress-with-ssl
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    kubernetes.io/ingress.class: traefik
+
+spec:
+  rules:
+    - host: paste.softiron.cloud
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name:  haste-server
+                port:
+                  number: 80
+  tls:
+  - hosts:
+    - paste.softiron.cloud
+    secretName: paste.softiron.cloud-tls
