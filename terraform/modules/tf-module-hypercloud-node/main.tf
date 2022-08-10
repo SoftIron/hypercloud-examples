@@ -45,6 +45,7 @@ resource "opennebula_virtual_machine" "instance" {
   nic {
     network_id      = var.network_id
     security_groups = var.security_groups
+    ip              = var.ip
   }
 
   dynamic "nic"{

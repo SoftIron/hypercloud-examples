@@ -34,6 +34,11 @@ variable "security_groups" {
   description = "List of the security group IDs to use"
 }
 
+variable "ip" {
+  description = "IP to use on the VM first nic"
+  default     = ""
+}
+
 variable "image_id" {
   description = "ID of the image to use"
 }
