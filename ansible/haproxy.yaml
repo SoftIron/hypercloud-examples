@@ -11,6 +11,7 @@
   - name: Collect all controllers
     ansible.builtin.set_fact:
       controllers: "{{ groups['k3s_master'] | map('extract', hostvars, ['ansible_host']) }}"
+      workers: "{{ groups['k3s_workers'] | map('extract', hostvars, ['ansible_host']) }}"
 
   - name: Create HAProxy configuration from template
     ansible.builtin.template:
