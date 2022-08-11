@@ -6,12 +6,24 @@ spec:
   selector:
     matchLabels:
       app: haste-server
-  replicas: 1
+  replicas: 2
   template:
     metadata:
       labels:
         app: haste-server
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - haste-server
+              topologyKey: kubernetes.io/hostname
       containers:
       - name: haste-server
         image: ghcr.io/palvarez89/haste-server:s3-and-ui
