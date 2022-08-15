@@ -23,7 +23,7 @@ resource "opennebula_virtual_machine" "instance" {
   context = {
     SSH_PUBLIC_KEY = join("\n", var.ssh_key)
     NETWORK      = "YES"
-    HOSTNAME     = "$NAME"
+    SET_HOSTNAME = "$NAME"
   }
 
   os {
