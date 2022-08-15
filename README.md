@@ -16,5 +16,5 @@ This will create all the VMs needed, and an Ansible inventory file located on
 Once the VMs are created, you can run the following `ansible` commands from
 the `ansible/` folder:
 
-    ansible-playbook -i inventory/hosts bootstrap.yaml
     ansible-playbook -i inventory/hosts k3s_cluster.yaml
+    ansible-playbook -i inventory/hosts haproxy.yaml
