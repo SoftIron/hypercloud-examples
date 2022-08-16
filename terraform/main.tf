@@ -8,8 +8,8 @@ module "controllers" {
   memory          = 8192
   ssh_key         = data.http.ssh_keys.*.response_body
   image_id        = 26
-  network_id      = 2
-  security_groups = [0, 101]
+  network_id      = var.internal_net_id
+  security_groups = var.internal_net_security_groups
 }
 
 module "workers" {
@@ -22,8 +22,8 @@ module "workers" {
   memory          = 1024
   ssh_key         = data.http.ssh_keys.*.response_body
   image_id        = 26
-  network_id      = 2
-  security_groups = [0, 101]
+  network_id      = var.internal_net_id
+  security_groups = var.internal_net_security_groups
 }
 
 module "loadbalancers" {
@@ -36,10 +36,10 @@ module "loadbalancers" {
   memory          = 1024
   ssh_key         = data.http.ssh_keys.*.response_body
   image_id        = 26
-  network_id      = 3
-  security_groups = [0, 110]
-  ip              = "98.163.170.11"
+  network_id      = var.public_net_id
+  security_groups = var.public_net_security_groups
+  ip              = var.public_net_ip
   second_nic      = true
-  second_nic_net  = 2
-  second_nic_sgs  = [0, 101]
+  second_nic_net  = var.internal_net_id
+  second_nic_sgs  = var.internal_net_security_groups
 }
