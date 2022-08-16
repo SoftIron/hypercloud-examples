@@ -1,7 +1,7 @@
 resource "opennebula_security_group" "k3s_internal" {
   name        = "k3s-internal-insecure"
   description = "k3s internal network security group"
-  group       = "SoftIron PE"
+  group       = var.hypercloud_group
 
   rule {
     protocol  = "ALL"
@@ -17,7 +17,7 @@ resource "opennebula_security_group" "k3s_internal" {
 resource "opennebula_security_group" "k3s_public" {
   name        = "k3s-public-facing"
   description = "k3s public network security group"
-  group       = "SoftIron PE"
+  group       = var.hypercloud_group
 
   rule {
     protocol  = "ALL"

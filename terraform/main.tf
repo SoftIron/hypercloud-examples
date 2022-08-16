@@ -1,6 +1,6 @@
 module "controllers" {
   source          = "./modules/tf-module-hypercloud-node"
-  group_name      = "SoftIron PE"
+  group_name      = var.hypercloud_group
   num             = var.k3s_controllers
   name            = "k3s-controller"
   cpus            = 2
@@ -14,7 +14,7 @@ module "controllers" {
 
 module "workers" {
   source          = "./modules/tf-module-hypercloud-node"
-  group_name      = "SoftIron PE"
+  group_name      = var.hypercloud_group
   num             = var.k3s_workers
   name            = "k3s-worker"
   cpus            = 1
@@ -28,7 +28,7 @@ module "workers" {
 
 module "loadbalancers" {
   source          = "./modules/tf-module-hypercloud-node"
-  group_name      = "SoftIron PE"
+  group_name      = var.hypercloud_group
   num             = var.k3s_loadbalancers
   name            = "k3s-loadbalancer"
   cpus            = 1

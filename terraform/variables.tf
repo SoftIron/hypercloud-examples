@@ -7,6 +7,8 @@ variable "k3s_workers" {}
 
 variable "gitlab_user_names" {}
 
+variable "hypercloud_group" {}
+
 /* Networking */
 
 variable "internal_net_id" {}
