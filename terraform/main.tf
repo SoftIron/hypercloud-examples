@@ -9,7 +9,7 @@ module "controllers" {
   ssh_key         = data.http.ssh_keys.*.response_body
   image_id        = 26
   network_id      = var.internal_net_id
-  security_groups = var.internal_net_security_groups
+  security_groups = [0, opennebula_security_group.k3s_internal.id]
 }
 
 module "workers" {
@@ -23,7 +23,7 @@ module "workers" {
   ssh_key         = data.http.ssh_keys.*.response_body
   image_id        = 26
   network_id      = var.internal_net_id
-  security_groups = var.internal_net_security_groups
+  security_groups = [0, opennebula_security_group.k3s_internal.id]
 }
 
 module "loadbalancers" {
@@ -37,9 +37,9 @@ module "loadbalancers" {
   ssh_key         = data.http.ssh_keys.*.response_body
   image_id        = 26
   network_id      = var.public_net_id
-  security_groups = var.public_net_security_groups
+  security_groups = [0, opennebula_security_group.k3s_public.id]
   ip              = var.public_net_ip
   second_nic      = true
   second_nic_net  = var.internal_net_id
-  second_nic_sgs  = var.internal_net_security_groups
+  second_nic_sgs  = [0, opennebula_security_group.k3s_internal.id]
 }
