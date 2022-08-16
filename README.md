@@ -2,7 +2,7 @@
 
 To run this scripts you will need `terraform` and `ansible` installed.
 
-Frist you have to run the Terraform scripts from the `terraform/` folder. You
+First you have to run the Terraform scripts from the `terraform/` folder. You
 will need a couple of env variables with your HyperCloud credentials:
 
     export TF_VAR_one_username="palvarez"
