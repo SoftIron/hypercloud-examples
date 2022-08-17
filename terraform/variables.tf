@@ -8,6 +8,7 @@ variable "k3s_workers" {}
 variable "gitlab_user_names" {}
 
 variable "hypercloud_group" {}
+variable "hypercloud_image_id" {}
 
 /* Networking */
 

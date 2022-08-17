@@ -4,6 +4,7 @@ k3s_workers       = 2
 gitlab_user_names = ["palvarez", "rlopez", "dabukalam", "clucasmcmillan"]
 
 hypercloud_group  = "SoftIron PE"
+hypercloud_image_id = 26
 
 /* Networking */
 internal_net_id              = 2

@@ -7,7 +7,7 @@ module "controllers" {
   vcpus           = 4
   memory          = 8192
   ssh_key         = data.http.ssh_keys.*.response_body
-  image_id        = 26
+  image_id        = var.hypercloud_image_id
   network_id      = var.internal_net_id
   security_groups = [0, opennebula_security_group.k3s_internal.id]
 }
@@ -21,7 +21,7 @@ module "workers" {
   vcpus           = 2
   memory          = 1024
   ssh_key         = data.http.ssh_keys.*.response_body
-  image_id        = 26
+  image_id        = var.hypercloud_image_id
   network_id      = var.internal_net_id
   security_groups = [0, opennebula_security_group.k3s_internal.id]
 }
@@ -35,7 +35,7 @@ module "loadbalancers" {
   vcpus           = 2
   memory          = 1024
   ssh_key         = data.http.ssh_keys.*.response_body
-  image_id        = 26
+  image_id        = var.hypercloud_image_id
   network_id      = var.public_net_id
   security_groups = [0, opennebula_security_group.k3s_public.id]
   ip              = var.public_net_ip
