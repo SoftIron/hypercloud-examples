@@ -1,0 +1,22 @@
+---
+- name: uninstall agent
+  shell:
+    executable: /bin/bash
+    cmd: |
+      ret=0
+      if [[ -s /usr/local/bin/k3s-agent-uninstall.sh ]]; then
+        /usr/local/bin/k3s-agent-uninstall.sh
+        echo "Removed k3s agent." && ret=1
+      fi
+      exit $ret
+  failed_when: false
+  register: uninstall_k3s_agent
+  changed_when: uninstall_k3s_agent.rc == 1
+
+- name: delete from cluster
+  shell: |
+    kubectl delete node {{ inventory_hostname }}
+  when: uninstall_k3s_agent.changed
+  delegate_to: "{{ groups['k3s_master'][0] }}"
+  failed_when: false
+  changed_when: false

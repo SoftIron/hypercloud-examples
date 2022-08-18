@@ -1,0 +1,16 @@
+---
+- name: uninstall k3s
+  shell:
+    executable: /bin/bash
+    cmd: |
+      ret=0
+      if [[ -s /usr/local/bin/k3s-uninstall.sh ]]; then
+        /usr/local/bin/k3s-uninstall.sh
+        echo "Removed cluster." && ret=1
+      fi
+      exit $ret
+  failed_when: false
+  register: uninstall_k3s
+  changed_when: uninstall_k3s.rc == 1
+
+# Remove helm?

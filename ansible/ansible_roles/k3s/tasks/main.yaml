@@ -1,0 +1,8 @@
+---
+- name: install curl and wget
+  include_role:
+    name: packages
+  vars:
+    packages_list: [curl, wget]
+
+- include_tasks: "{{ role_function }}.yaml"

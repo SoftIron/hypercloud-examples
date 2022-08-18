@@ -1,0 +1,55 @@
+---
+- name: bootstrap k3s cluster
+  hosts: k3s_master
+  roles:
+    - k3s
+  vars:
+    role_function: bootstrap
+  become: true
+
+- name: add k3s nodes
+  hosts: k3s_workers
+  tasks:
+    - block:
+        - name: get token
+          shell: |
+            cat /var/lib/rancher/k3s/server/node-token
+          register: join_token
+          changed_when: false
+        - set_fact:
+            join_token: "{{ join_token.stdout }}"
+        - name: prepare url
+          set_fact:
+            join_url: "https://{{ hostvars[groups['k3s_master'][0]].ansible_default_ipv4.address }}:6443"
+          when: join_url is not defined
+        - debug:
+            msg: 
+              - "Join Token: {{ join_token }}"
+              - "Join URL: {{ join_url }}"
+      delegate_to: "{{ groups['k3s_master'][0] }}"
+      run_once: true
+
+    - include_role:
+        name: k3s
+      vars:
+        role_function: worker
+  become: true
+
+- name: destroy node
+  hosts: k3s_workers
+  roles:
+    - k3s
+  vars:
+    role_function: destroy_worker
+  tags: [never, destroy]
+  become: true
+  
+- name: destroy cluster
+  hosts: k3s_master
+  roles:
+    - k3s
+  vars:
+    role_function: destroy_cluster
+  tags: [never, destroy]
+  become: true
+

@@ -1,0 +1,46 @@
+---
+## Don't worry about docker, we'll just use containerd with nerdctl
+#- include_tasks: docker.yaml
+
+- include_tasks: nerd.yaml
+
+- name: check for k3s
+  shell: /usr/bin/which k3s
+  register: k3s_installed
+  failed_when: false
+  changed_when: false
+  
+- block:
+    - name: download k3s installer
+      get_url:
+        url: https://get.k3s.io
+        dest: /tmp/k3s_bootstrap.sh
+    
+    - name: run k3s installer
+      shell: /bin/sh /tmp/k3s_bootstrap.sh
+  when: k3s_installed.rc != 0
+
+- name: check for helm
+  shell: /usr/bin/which helm
+  register: helm_installed
+  failed_when: false
+  changed_when: false
+
+- block:
+    - name: download helm installer
+      get_url:
+        url: https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+        dest: /tmp/get_helm.sh
+    - name: run helm installer
+      include_role:
+        name: shellscript
+      vars:
+        script: |
+          /bin/bash /tmp/get_helm.sh
+  when: helm_installed.rc != 0
+
+- name: set environment variable
+  copy:
+    dest: /etc/profile.d/99-kubectl.sh
+    content: |
+      export KUBECONFIG=/etc/rancher/k3s/k3s.yaml

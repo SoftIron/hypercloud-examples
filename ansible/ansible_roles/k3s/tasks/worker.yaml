@@ -1,0 +1,18 @@
+---
+## Don't worry about docker, we'll just use containerd with nerdctl
+#- include_tasks: docker.yaml
+
+- include_tasks: nerd.yaml
+
+- name: check node in cluster
+  shell: |
+    kubectl get node {{ inventory_hostname }}
+  failed_when: false
+  changed_when: false
+  delegate_to: "{{ groups['k3s_master'][0] }}"
+  register: node_exists
+
+- name: add node to cluster
+  shell: |
+    curl --connect-timeout 10 -sfL https://get.k3s.io | K3S_URL={{ join_url }} K3S_TOKEN={{ join_token }} sh - 
+  when: node_exists.rc != 0
