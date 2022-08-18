@@ -1,0 +1,83 @@
+- name: Deploy haste-server on Kubernetes
+  hosts: k3s_master[0]
+  vars:
+    kubernetes_files_dir: /root/kubernetes-files/lychee
+    kubernetes_config_file: /etc/rancher/k3s/k3s.yaml
+    ceph_csi_config_files:
+      - ceph-conf.yaml
+      - ceph-csi-configmap.yaml
+      - ceph-cephfs-secrets.yaml
+    ceph_csi_plugin_files:
+      - csi-provisioner-rbac.yaml
+      - csi-nodeplugin-rbac.yaml
+      - csi-cephfsplugin-provisioner.yaml
+      - csi-cephfsplugin.yaml
+    lychee_kubernetes_files:
+      - ceph-cephfs-sc.yaml
+      - lychee-claim0-persistentvolumeclaim.yaml
+      - lychee-claim1-persistentvolumeclaim.yaml
+      - mariadb-claim0-persistentvolumeclaim.yaml
+      - mariadb-deployment.yaml
+      - mariadb-service.yaml
+      - lychee-deployment.yaml
+      - lychee-service.yaml
+
+  tasks:
+  - name: Make sure we have pip installed
+    ansible.builtin.apt:
+      name: python3-pip
+
+  - name: Install dependencies to run kubernetes module
+    ansible.builtin.pip:
+      name:
+      - kubernetes>=12.0.0
+
+  - name: Create directory for kubernetes files
+    ansible.builtin.file:
+      path: "{{ kubernetes_files_dir }}"
+      state: directory
+
+  - name: Copy kubernetes files for ceph-csi configuration
+    ansible.builtin.copy:
+      src: kubernetes/lychee/{{ item }}
+      dest: "{{ kubernetes_files_dir }}/{{ item }}"
+    with_items: "{{ ceph_csi_config_files }}"
+
+  - name: Deploy kubernetes objects for ceph-csi configuration
+    kubernetes.core.k8s:
+      state: present
+      src: "{{ kubernetes_files_dir }}/{{ item }}"
+      namespace: default
+    with_items: "{{ ceph_csi_config_files }}"
+    environment:
+      KUBECONFIG: "{{ kubernetes_config_file }}"
+
+  - name: Clone ceph-csi repo
+    ansible.builtin.git:
+      repo: https://github.com/ceph/ceph-csi.git
+      dest: /opt/ceph-csi
+      version: v3.6.2
+
+  - name: Deploy ceph-csi
+    kubernetes.core.k8s:
+      state: present
+      src: /opt/ceph-csi/deploy/cephfs/kubernetes/{{ item }}
+      namespace: default
+    with_items: "{{ ceph_csi_plugin_files}}"
+    environment:
+      KUBECONFIG: "{{ kubernetes_config_file }}"
+
+  - name: Copy kubernetes files for lychee
+    ansible.builtin.copy:
+      src: kubernetes/lychee/{{ item }}
+      dest: "{{ kubernetes_files_dir }}/{{ item }}"
+    with_items: "{{ lychee_kubernetes_files }}"
+
+  - name: Deploy kubernetes objects for ceph-csi configuration
+    kubernetes.core.k8s:
+      state: present
+      src: "{{ kubernetes_files_dir }}/{{ item }}"
+      namespace: default
+    with_items: "{{ lychee_kubernetes_files }}"
+    environment:
+      KUBECONFIG: "{{ kubernetes_config_file }}"

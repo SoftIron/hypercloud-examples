@@ -1,0 +1,12 @@
+apiVersion: v1 
+kind: Service
+metadata: 
+   name: mariadb
+spec: 
+   selector: 
+      io.kompose.service: mariadb
+   type: ClusterIP 
+   ports:
+   - port: 3306
+     protocol: TCP
+     targetPort: 3306
