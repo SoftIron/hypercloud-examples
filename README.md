@@ -9,7 +9,7 @@ installed.
 
 Some variables used by the scripts need to be modified to work on other
 environments as there are a few values hardcoded. You can find them in
-`terraform/terraform.tfvars`:
+[terraform/terraform.tfvars]:
 
 - `hypercloud_image_id` - ID of the image to use on the VMs, Debian or Ubuntu.
 - `hypercloud_group` - Name of the group used to deploy the VMs.
@@ -51,8 +51,8 @@ This command will take a while. It will configure all the Kubernetes nodes.
 Once Kubernetes is running, you can start installing things on top. You can
 find on the `kubernetes/` folder the examples we are going to be deploying now.
 
-The main file we are going to be deploying is `kubernetes/haste-server.yaml`,
-which will be deploying an instance of `haste-server`, configured to store
+The main file we are going to be deploying is [kubernetes/haste-server.yaml],
+which will be deploying an instance of [haste-server], configured to store
 all data on HyperCloud object storage.
 
 The Ingress to this service is configured with SSL certificates automatically
@@ -63,3 +63,7 @@ To simplify all this, you can run the following Ansible script which will deploy
 everything. Again, from the `ansible/` folder.
 
     ansible-playbook -i inventory/hosts deploy_haste_kubernetes.yaml
+
+[terraform/terraform.tfvars]: terraform/terraform.tfvars
+[kubernetes/haste-server.yaml]: kubernetes/haste-server.yaml
+[haste-server]: https://github.com/toptal/haste-server
