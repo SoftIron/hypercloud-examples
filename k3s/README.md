@@ -56,7 +56,7 @@ find on the `kubernetes/` folder the examples we are going to be deploying now.
 This example will deploy a pastebin service that will use HyperCloud S3 as the
 storage backend.
 
-The main file we are going to be deploying is [kubernetes/haste-server.yaml],
+The main file we are going to be deploying is [kubernetes/haste-server/haste-server.yaml],
 which will be deploying an instance of [haste-server], configured to store
 all data on HyperCloud object storage.
 
@@ -78,5 +78,5 @@ everything. Again, from the `ansible/` folder.
     ansible-playbook -i inventory/hosts deploy_haste_kubernetes.yaml
 
 [terraform/terraform.tfvars]: terraform/terraform.tfvars
-[kubernetes/haste-server.yaml]: kubernetes/haste-server.yaml
+[kubernetes/haste-server/haste-server.yaml]: kubernetes/haste-server/haste-server.yaml
 [haste-server]: https://github.com/toptal/haste-server

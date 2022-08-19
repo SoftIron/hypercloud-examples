@@ -1,7 +1,7 @@
 - name: Deploy haste-server on Kubernetes
   hosts: k3s_master[0]
   vars:
-    kubernetes_files_dir: /root/kubernetes-files
+    kubernetes_files_dir: /root/kubernetes-files/haste-server
     kubernetes_config_file: /etc/rancher/k3s/k3s.yaml
     kubernetes_files:
       - le-prod.yaml
@@ -42,7 +42,7 @@
 
   - name: Copy kubernetes files
     ansible.builtin.copy:
-      src: kubernetes/{{ item }}
+      src: kubernetes/haste-server/{{ item }}
       dest: "{{ kubernetes_files_dir }}/{{ item }}"
     with_items: "{{ kubernetes_files }}"
 
