@@ -1,10 +1,10 @@
 resource "local_file" "inventory" {
   filename = "${path.root}/../ansible/inventory/hosts"
   content = templatefile("${path.root}/templates/inventory.tpl", {
-    controller_ips = module.controllers.ips,
-    controller_names = module.controllers.names
-    worker_ips = module.workers.ips,
-    worker_names = module.workers.names,
+    server_ips = module.servers.ips,
+    server_names = module.servers.names
+    agent_ips = module.agents.ips,
+    agent_names = module.agents.names,
     lb_ips = module.loadbalancers.ips,
     lb_names = module.loadbalancers.names
   })

@@ -35,19 +35,19 @@ frontend k3s-ssl
 
 backend http_nginx_pool
   mode http
-{% for ip in controllers %}
-  server controller80_{{ loop.index }} {{ ip }}:80 check
+{% for ip in servers %}
+  server server80_{{ loop.index }} {{ ip }}:80 check
 {% endfor %}
-{% for ip in workers %}
-  server worker80_{{ loop.index }} {{ ip }}:80 check
+{% for ip in agents %}
+  server agent80_{{ loop.index }} {{ ip }}:80 check
 {% endfor %}
 
 backend https_nginx_pool
   mode tcp
   balance source
-{% for ip in controllers %}
-  server controller443_{{ loop.index }} {{ ip }}:443 check
+{% for ip in servers %}
+  server server443_{{ loop.index }} {{ ip }}:443 check
 {% endfor %}
-{% for ip in workers %}
-  server worker443_{{ loop.index }} {{ ip }}:443 check
+{% for ip in agents %}
+  server agent443_{{ loop.index }} {{ ip }}:443 check
 {% endfor %}

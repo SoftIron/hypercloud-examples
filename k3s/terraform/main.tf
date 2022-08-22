@@ -1,8 +1,8 @@
-module "controllers" {
+module "servers" {
   source          = "./modules/tf-module-hypercloud-node"
   group_name      = var.hypercloud_group
-  num             = var.k3s_controllers
-  name            = "k3s-controller"
+  num             = var.k3s_servers
+  name            = "k3s-server"
   cpus            = 2
   vcpus           = 4
   memory          = 8192
@@ -12,11 +12,11 @@ module "controllers" {
   security_groups = [0, opennebula_security_group.k3s_internal.id]
 }
 
-module "workers" {
+module "agents" {
   source          = "./modules/tf-module-hypercloud-node"
   group_name      = var.hypercloud_group
-  num             = var.k3s_workers
-  name            = "k3s-worker"
+  num             = var.k3s_agents
+  name            = "k3s-agent"
   cpus            = 1
   vcpus           = 2
   memory          = 1024

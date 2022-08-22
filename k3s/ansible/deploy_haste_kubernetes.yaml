@@ -1,5 +1,5 @@
 - name: Deploy haste-server on Kubernetes
-  hosts: k3s_master[0]
+  hosts: k3s_server[0]
   vars:
     kubernetes_files_dir: /root/kubernetes-files/haste-server
     kubernetes_config_file: /etc/rancher/k3s/k3s.yaml

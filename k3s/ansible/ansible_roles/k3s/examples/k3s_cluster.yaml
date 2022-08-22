@@ -1,6 +1,6 @@
 ---
 - name: bootstrap k3s cluster
-  hosts: k3s_master
+  hosts: k3s_server
   roles:
     - k3s
   vars:
@@ -8,7 +8,7 @@
   become: true
 
 - name: add k3s nodes
-  hosts: k3s_workers
+  hosts: k3s_agents
   tasks:
     - block:
         - name: get token
@@ -20,13 +20,13 @@
             join_token: "{{ join_token.stdout }}"
         - name: prepare url
           set_fact:
-            join_url: "https://{{ hostvars[groups['k3s_master'][0]].ansible_default_ipv4.address }}:6443"
+            join_url: "https://{{ hostvars[groups['k3s_server'][0]].ansible_default_ipv4.address }}:6443"
           when: join_url is not defined
         - debug:
             msg: 
               - "Join Token: {{ join_token }}"
               - "Join URL: {{ join_url }}"
-      delegate_to: "{{ groups['k3s_master'][0] }}"
+      delegate_to: "{{ groups['k3s_server'][0] }}"
       run_once: true
 
     - include_role:
@@ -36,7 +36,7 @@
   become: true
 
 - name: destroy node
-  hosts: k3s_workers
+  hosts: k3s_agents
   roles:
     - k3s
   vars:
@@ -45,7 +45,7 @@
   become: true
   
 - name: destroy cluster
-  hosts: k3s_master
+  hosts: k3s_server
   roles:
     - k3s
   vars:
