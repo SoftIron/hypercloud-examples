@@ -38,8 +38,7 @@
   tasks:
     - block:
         - name: get token
-          shell: |
-            cat /var/lib/rancher/k3s/server/node-token
+          shell: cat /var/lib/rancher/k3s/server/node-token
           register: join_token
           changed_when: false
         - set_fact:
