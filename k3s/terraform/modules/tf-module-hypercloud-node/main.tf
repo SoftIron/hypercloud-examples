@@ -39,7 +39,10 @@ resource "opennebula_virtual_machine" "instance" {
 
   on_disk_change = "RECREATE"
 
-  sched_requirements = "FREE_CPU > 60"
+  graphics {
+    type   = "VNC"
+    listen = "0.0.0.0"
+  }
 
   nic {
     network_id      = var.network_id
