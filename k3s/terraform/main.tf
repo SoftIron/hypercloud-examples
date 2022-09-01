@@ -1,5 +1,5 @@
 module "servers" {
-  source          = "./modules/tf-module-hypercloud-node"
+  source          = "../../tf-modules/tf-module-hypercloud-node"
   group_name      = var.hypercloud_group
   num             = var.k3s_servers
   name            = "k3s-server"
@@ -13,7 +13,7 @@ module "servers" {
 }
 
 module "agents" {
-  source          = "./modules/tf-module-hypercloud-node"
+  source          = "../../tf-modules/tf-module-hypercloud-node"
   group_name      = var.hypercloud_group
   num             = var.k3s_agents
   name            = "k3s-agent"
@@ -27,7 +27,7 @@ module "agents" {
 }
 
 module "loadbalancers" {
-  source          = "./modules/tf-module-hypercloud-node"
+  source          = "../../tf-modules/tf-module-hypercloud-node"
   group_name      = var.hypercloud_group
   num             = var.k3s_loadbalancers
   name            = "k3s-loadbalancer"
