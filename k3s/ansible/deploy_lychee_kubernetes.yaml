@@ -21,6 +21,7 @@
       - mariadb-service.yaml
       - lychee-deployment.yaml
       - lychee-service.yaml
+      - lychee-ingress.yaml
 
   tasks:
   - name: Make sure we have pip installed
