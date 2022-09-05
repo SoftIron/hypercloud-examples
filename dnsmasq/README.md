@@ -2,8 +2,8 @@
 
 This example will deploy a single DNS server running `dnsmasq`.
 
-To run these scripts you will need `terraform` and `ansible` tools
-installed.
+To run these scripts you will need recent versions of `terraform`
+and `ansible` tools installed.
 
 ## Creating the VMs with Terraform
 
