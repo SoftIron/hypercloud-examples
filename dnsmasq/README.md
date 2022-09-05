@@ -15,14 +15,14 @@ authenticate, for example:
     export TF_VAR_one_password="23a0ce0ac7809e0as98e7..."
 
 With those env variables configured, you should be able to run the Terraform
-scripts:
+scripts from the `terraform` folder:
 
+    cd terraform/
     terraform init
     terraform apply
 
 This will create all the VMs needed, and an Ansible inventory file located on
 `ansible/inventory/hosts`
-
 
 ## Installing Dnsmasq
 
@@ -42,3 +42,10 @@ You can use `dig` to verify that the service is working:
     dig @<host-IP> <domain>
 
 [ansible/files/hosts]: ansible/files/hosts
+
+## Destroying the VM
+
+Once you've finished testing, you can destroy the VM by going back to the
+`terraform/` folder and running:
+
+    terraform destroy
