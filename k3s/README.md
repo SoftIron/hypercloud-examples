@@ -1,8 +1,9 @@
 # K3s deployment example for HyperCloud
 
 This example will help you deploy a basic Kubernetes cluster into HyperCloud,
-and additionally an application running on top integrated with S3 storage from
-HyperCloud, and configured with SSL certificates.
+and additionally a few application examples running on top. These examples also
+integrate with persistent storage from HyperCloud, and configure the services
+with SSL certificates.
 
 To run these scripts you will need recent versions of `terraform` and `ansible`
 tools installed.
