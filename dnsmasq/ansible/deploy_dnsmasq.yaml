@@ -1,0 +1,31 @@
+- name: install dnsmasq
+  hosts: dnsmasq
+  tasks:
+    - name: Stop and disable resolved
+      ansible.builtin.systemd:
+        name: systemd-resolved
+        state: stopped
+        enabled: false
+
+    - name: Install dnsmasq
+      apt:
+          name: dnsmasq
+          update_cache: true
+    - name: configure dnsmasq
+      copy:
+        dest: /etc/dnsmasq.conf
+        content: |
+          listen-address={{ ansible_default_ipv4.address }}
+      notify: restart dnsmasq
+
+    - name: configure hosts
+      copy:
+        src: hosts
+        dest: /etc/hosts
+      notify: restart dnsmasq
+
+  handlers:
+    - name: restart dnsmasq
+      ansible.builtin.systemd:
+        name: dnsmasq
+        state: restarted
