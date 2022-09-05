@@ -4,8 +4,8 @@ This example will help you deploy a basic Kubernetes cluster into HyperCloud,
 and additionally an application running on top integrated with S3 storage from
 HyperCloud, and configured with SSL certificates.
 
-To run these scripts you will need `terraform` and `ansible` tools
-installed.
+To run these scripts you will need recent versions of `terraform` and `ansible`
+tools installed.
 
 Some variables used by the scripts need to be modified to work on other
 environments as there are a few values hardcoded. You can find them in
