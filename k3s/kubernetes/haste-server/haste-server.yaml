@@ -31,18 +31,31 @@ spec:
         - name: STORAGE_TYPE
           value: "amazon-s3"
         - name: STORAGE_AWS_ENDPOINT
-          value: "http://hypercloud.softiron.com:7480"
+          value: &endpoint "http://hypercloud.softiron.com:7480"
         - name: STORAGE_AWS_BUCKET
-          value: "haste"
+          value: &bucket "haste"
         - name: STORAGE_AWS_KEY_ID
-          value: "89WTX1ZYN73TN64S94UC"
+          value: &key-id "89WTX1ZYN73TN64S94UC"
         - name: STORAGE_AWS_KEY_SECRET
-          value: "wOy8x0PDVUmZjSlOeipKtQqxQ2jBYrQrZcNadqNE"
+          value: &key-secret "wOy8x0PDVUmZjSlOeipKtQqxQ2jBYrQrZcNadqNE"
         - name: STORAGE_AWS_PATH_STYLE
           value: "true"
         ports:
         - containerPort: 7777
         imagePullPolicy: Always
+      initContainers:
+      - name: init-bucket
+        image: amazon/aws-cli
+        env:
+        - name: STORAGE_AWS_ENDPOINT
+          value: *endpoint
+        - name: STORAGE_AWS_BUCKET
+          value: *bucket
+        - name: AWS_ACCESS_KEY_ID
+          value: *key-id
+        - name: AWS_SECRET_ACCESS_KEY
+          value: *key-secret
+        command: ['aws', "--endpoint-url=$(STORAGE_AWS_ENDPOINT)", 's3api', 'create-bucket', '--bucket=$(STORAGE_AWS_BUCKET)']
 ---
 apiVersion: v1
 kind: Service
