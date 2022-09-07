@@ -31,13 +31,13 @@ spec:
         - name: STORAGE_TYPE
           value: "amazon-s3"
         - name: STORAGE_AWS_ENDPOINT
-          value: &endpoint "http://hypercloud.softiron.com:7480"
+          value: &endpoint "{{ haste_s3_endpoint }}"
         - name: STORAGE_AWS_BUCKET
           value: &bucket "haste"
         - name: STORAGE_AWS_KEY_ID
-          value: &key-id "89WTX1ZYN73TN64S94UC"
+          value: &key-id "{{ haste_s3_key_id }}"
         - name: STORAGE_AWS_KEY_SECRET
-          value: &key-secret "wOy8x0PDVUmZjSlOeipKtQqxQ2jBYrQrZcNadqNE"
+          value: &key-secret "{{ haste_s3_key_secret }}"
         - name: STORAGE_AWS_PATH_STYLE
           value: "true"
         ports:
@@ -81,7 +81,7 @@ metadata:
 
 spec:
   rules:
-    - host: paste.softiron.cloud
+    - host: {{ haste_domain_name }}
       http:
         paths:
           - path: /
@@ -103,7 +103,7 @@ metadata:
 
 spec:
   rules:
-    - host: paste.softiron.cloud
+    - host: {{ haste_domain_name }}
       http:
         paths:
           - path: /
@@ -115,5 +115,5 @@ spec:
                   number: 80
   tls:
   - hosts:
-    - paste.softiron.cloud
-    secretName: paste.softiron.cloud-tls
+    - {{ haste_domain_name }}
+    secretName: {{ haste_domain_name }}-tls
