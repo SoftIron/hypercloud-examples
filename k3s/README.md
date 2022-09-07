@@ -17,7 +17,8 @@ environments as there are a few values hardcoded. You can find them in
 - `internal_net_id` - ID of the network used by the VMs. Needs to be reachable
   from where you are running the deployment scripts.
 - `public_net_id` - ID of a network that can get public IPs.
-- `public_net_ip` - The public IP to use. If left empty, this will use an available IP from the network specified.
+- `public_net_ip` - The public IP to use. Empty by default, this will use an
+  available IP from the network specified. You can set an specific IP.
 
 ## Creating the VMs with Terraform
 

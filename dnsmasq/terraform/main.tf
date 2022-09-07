@@ -6,7 +6,7 @@ module "dnsmasq" {
   cpus            = 1
   vcpus           = 2
   memory          = 1024
-  ssh_key         = data.http.ssh_keys.*.response_body
+  ssh_key         = var.ssh_keys
   image_id        = var.hypercloud_image_id
   network_id      = var.internal_net_id
   security_groups = [0, opennebula_security_group.dnsmasq_internal.id]

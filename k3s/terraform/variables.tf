@@ -5,7 +5,7 @@ variable "k3s_loadbalancers" {}
 variable "k3s_servers" {}
 variable "k3s_agents" {}
 
-variable "gitlab_user_names" {}
+variable "ssh_keys" {}
 
 variable "hypercloud_group" {}
 variable "hypercloud_image_id" {}
