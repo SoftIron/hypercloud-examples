@@ -10,4 +10,4 @@ hypercloud_image_id = 26
 /* Networking */
 internal_net_id              = 2
 public_net_id                = 3
-public_net_ip                = "98.163.170.14"
+public_net_ip                = ""
