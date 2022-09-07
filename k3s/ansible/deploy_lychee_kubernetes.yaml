@@ -39,8 +39,8 @@
       path: "{{ kubernetes_files_dir }}"
       state: directory
 
-  - name: Copy kubernetes files for ceph-csi configuration
-    ansible.builtin.copy:
+  - name: Template kubernetes files for ceph-csi configuration
+    ansible.builtin.template:
       src: kubernetes/lychee/{{ item }}
       dest: "{{ kubernetes_files_dir }}/{{ item }}"
     with_items: "{{ ceph_csi_config_files }}"
@@ -69,8 +69,8 @@
     environment:
       KUBECONFIG: "{{ kubernetes_config_file }}"
 
-  - name: Copy kubernetes files for lychee
-    ansible.builtin.copy:
+  - name: Template kubernetes files for lychee
+    ansible.builtin.template:
       src: kubernetes/lychee/{{ item }}
       dest: "{{ kubernetes_files_dir }}/{{ item }}"
     with_items: "{{ lychee_kubernetes_files }}"

@@ -42,8 +42,8 @@
       path: "{{ kubernetes_files_dir }}"
       state: directory
 
-  - name: Copy kubernetes files
-    ansible.builtin.copy:
+  - name: Template kubernetes files
+    ansible.builtin.template:
       src: kubernetes/haste-server/{{ item }}
       dest: "{{ kubernetes_files_dir }}/{{ item }}"
     with_items: "{{ kubernetes_files }}"
