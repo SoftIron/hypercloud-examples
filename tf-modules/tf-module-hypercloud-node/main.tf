@@ -33,7 +33,7 @@ resource "opennebula_virtual_machine" "instance" {
 
   disk {
     image_id = var.image_id
-    size     = 10000
+    size     = 20000
     target   = "vda"
   }
 
