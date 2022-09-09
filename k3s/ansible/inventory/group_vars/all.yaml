@@ -1,4 +1,6 @@
 haste_s3_endpoint: http://hypercloud.softiron.com:7480
 haste_s3_key_id: 89WTX1ZYN73TN64S94UC
 haste_s3_key_secret: wOy8x0PDVUmZjSlOeipKtQqxQ2jBYrQrZcNadqNE
-haste_domain_name: paste.softiron.cloud
+haste_domain_name: paste.example.com
+
+letsencrypt_email: your.email@example.com
