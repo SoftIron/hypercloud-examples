@@ -17,9 +17,9 @@ module "agents" {
   group_name      = var.hypercloud_group
   num             = var.k3s_agents
   name            = "k3s-agent"
-  cpus            = 1
-  vcpus           = 2
-  memory          = 1024
+  cpus            = 2
+  vcpus           = 4
+  memory          = 8192
   ssh_key         = var.ssh_keys
   image_id        = var.hypercloud_image_id
   network_id      = var.internal_net_id
