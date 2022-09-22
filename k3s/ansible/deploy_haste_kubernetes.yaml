@@ -4,9 +4,9 @@
     kubernetes_files_dir: /root/kubernetes-files/haste-server
     kubernetes_config_file: /etc/rancher/k3s/k3s.yaml
     kubernetes_files:
-      - le-prod.yaml
-      - redirectscheme.yaml
-      - haste-server.yaml
+      - common/le-prod.yaml
+      - common/redirectscheme.yaml
+      - haste-server/haste-server.yaml
 
   tasks:
   - name: Make sure we have pip installed
@@ -44,15 +44,15 @@
 
   - name: Template kubernetes files
     ansible.builtin.template:
-      src: kubernetes/haste-server/{{ item }}
-      dest: "{{ kubernetes_files_dir }}/{{ item }}"
+      src: kubernetes/{{ item }}
+      dest: "{{ kubernetes_files_dir }}/{{ item | basename}}"
     with_items: "{{ kubernetes_files }}"
 
 
   - name: Deploy kubernetes objects
     kubernetes.core.k8s:
       state: present
-      src: "{{ kubernetes_files_dir }}/{{ item }}"
+      src: "{{ kubernetes_files_dir }}/{{ item | basename}}"
       namespace: default
     with_items: "{{ kubernetes_files }}"
     environment:
