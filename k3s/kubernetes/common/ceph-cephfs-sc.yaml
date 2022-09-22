@@ -12,7 +12,7 @@ parameters:
   # Ensure to create an entry in the configmap named ceph-csi-config, based on
   # csi-config-map-sample.yaml, to accompany the string chosen to
   # represent the Ceph cluster in clusterID below
-  clusterID: 49c482c9-bdde-58bf-9adb-f1c4354ff784
+  clusterID: {{ common_ceph_cluster_id }}
 
   # (required) CephFS filesystem name into which the volume shall be created
   # eg: fsName: myfs
@@ -20,7 +20,7 @@ parameters:
 
   # (optional) Ceph pool into which volume data shall be stored
   # pool: <cephfs-data-pool>
-  pool: cephfs_data
+  pool: {{ common_ceph_data_pool }}
 
   # (optional) Comma separated string of Ceph-fuse mount options.
   # For eg:

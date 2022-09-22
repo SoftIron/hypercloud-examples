@@ -10,12 +10,9 @@ apiVersion: v1
 kind: ConfigMap
 data:
   ceph.conf: |
-    [global]
-    fsid = 49c482c9-bdde-58bf-9adb-f1c4354ff784
-    mon_host = 192.168.11.224
-    auth_cluster_required = cephx
-    auth_service_required = cephx
-    auth_client_required = cephx
+    {% filter indent(width=4) %}
+    {{- common_ceph_conf }}
+    {% endfilter %}
 
   # keyring is a required key and its value should be empty
   keyring: |
