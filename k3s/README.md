@@ -55,6 +55,7 @@ find on the `kubernetes/` folder the examples we are going to be deploying now.
 These examples include:
 - [Haste-Server with S3 integration](haste-server.md)
 - [Lychee with CephFS integration](lychee.md)
+- [Grafana with CephFS integration](grafana.md)
 
 
 [terraform/terraform.tfvars]: terraform/terraform.tfvars
