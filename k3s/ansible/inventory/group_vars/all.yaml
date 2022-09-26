@@ -3,4 +3,26 @@ haste_s3_key_id: 89WTX1ZYN73TN64S94UC
 haste_s3_key_secret: wOy8x0PDVUmZjSlOeipKtQqxQ2jBYrQrZcNadqNE
 haste_domain_name: paste.example.com
 
+lychee_domain_name: lychee.example.com
+
 letsencrypt_email: your.email@example.com
+
+
+common_ceph_cluster_id: 49c482c9-bdde-58bf-9adb-f1c4354ff784
+common_ceph_monitors:
+- 192.168.11.224
+common_ceph_conf: |
+    [global]
+    fsid = {{ common_ceph_cluster_id }}
+    mon_host = {{ common_ceph_monitors | join(', ') }}
+    auth_cluster_required = cephx
+    auth_service_required = cephx
+    auth_client_required = cephx
+
+
+common_ceph_data_pool: cephfs_data
+
+common_ceph_user_id: cephfs.k3s
+common_ceph_user_key: AQCpsPli48YJAxAAXOcCywgHkf299VOmz6b+sA==
+common_ceph_admin_id: admin
+common_ceph_admin_key: AQDUrPlijcwlDhAAijoNVrFzcFI6NpFph2mx3g==

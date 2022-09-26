@@ -45,9 +45,11 @@ data:
   config.json: |-
     [
       {
-        "clusterID": "49c482c9-bdde-58bf-9adb-f1c4354ff784",
+        "clusterID": "{{ common_ceph_cluster_id }}",
         "monitors": [
-                "192.168.11.224:6789"
+                {%- for mon in common_ceph_monitors %}
+                "{{ mon }}:6789"{{ ", " if not loop.last else "" }}
+                {%- endfor %}
         ]
       }
     ]

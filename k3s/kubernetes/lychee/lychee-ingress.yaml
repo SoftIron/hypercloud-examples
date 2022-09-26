@@ -9,7 +9,7 @@ metadata:
 
 spec:
   rules:
-    - host: lychee.softiron.cloud
+    - host: {{ lychee_domain_name }}
       http:
         paths:
           - path: /
@@ -33,7 +33,7 @@ metadata:
 
 spec:
   rules:
-    - host: lychee.softiron.cloud
+    - host: {{ lychee_domain_name }}
       http:
         paths:
           - path: /
@@ -45,5 +45,5 @@ spec:
                   number: 80
   tls:
   - hosts:
-    - lychee.softiron.cloud
-    secretName: lychee.softiron.cloud-tls
+    - {{ lychee_domain_name }}
+    secretName: {{ lychee_domain_name }}-tls
