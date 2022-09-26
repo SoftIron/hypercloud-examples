@@ -1,4 +1,4 @@
-- name: Deploy haste-server on Kubernetes
+- name: Deploy Lychee on Kubernetes
   hosts: k3s_server[0]
   vars:
     kubernetes_files_dir: /root/kubernetes-files/lychee
@@ -29,6 +29,7 @@
   - name: Make sure we have pip installed
     ansible.builtin.apt:
       name: python3-pip
+      update_cache: yes
 
   - name: Install dependencies to run kubernetes module
     ansible.builtin.pip:
@@ -94,7 +95,7 @@
       dest: "{{ kubernetes_files_dir }}/{{ item | basename}}"
     with_items: "{{ lychee_kubernetes_files }}"
 
-  - name: Deploy kubernetes objects for ceph-csi configuration
+  - name: Deploy kubernetes files for lychee
     kubernetes.core.k8s:
       state: present
       src: "{{ kubernetes_files_dir }}/{{ item | basename}}"
