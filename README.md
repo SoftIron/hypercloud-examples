@@ -7,6 +7,7 @@ These examples include:
 - [Kubernetes using K3s] including some services running on top:
     - [Haste-Server with S3 integration] (pastebin)
     - [Lychee with CephFS integration] (photo management)
+    - [Grafana with CephFS integration] (analytics and monitoring)
 - [A basic dnsmasq server]
 
 [HyperCloud]: https://softiron.com/hypercloud
@@ -14,3 +15,4 @@ These examples include:
 [A basic dnsmasq server]: dnsmasq
 [Haste-Server with S3 integration]: k3s/haste-server.md
 [Lychee with CephFS integration]: k3s/lychee.md
+[Grafana with CephFS integration]: k3s/grafana.md

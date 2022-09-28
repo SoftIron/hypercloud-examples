@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-configmap-dashboard-templates
+data:
+{{- $glob := printf "dashboard-templates/%s/*.json" .Values.grafana_dashboard_templates_dir }}
+{{- (.Files.Glob $glob).AsConfig | nindent 2 }}

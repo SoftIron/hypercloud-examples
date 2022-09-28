@@ -5,6 +5,12 @@ haste_domain_name: paste.example.com
 
 lychee_domain_name: lychee.example.com
 
+grafana_admin_user: grafanauser
+grafana_admin_pass: grafanapass
+
+grafana_domain_name: grafana.example.com
+
+
 letsencrypt_email: your.email@example.com
 
 

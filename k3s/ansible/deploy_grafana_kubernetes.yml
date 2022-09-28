@@ -1,7 +1,7 @@
-- name: Deploy Lychee on Kubernetes
+- name: Deploy Grafana on Kubernetes
   hosts: k3s_server[0]
   vars:
-    kubernetes_files_dir: /root/kubernetes-files/lychee
+    kubernetes_files_dir: /root/kubernetes-files/grafana
     kubernetes_config_file: /etc/rancher/k3s/k3s.yaml
     ceph_csi_config_files:
       - common/ceph-conf.yaml
@@ -12,24 +12,20 @@
       - csi-nodeplugin-rbac.yaml
       - csi-cephfsplugin-provisioner.yaml
       - csi-cephfsplugin.yaml
-    lychee_kubernetes_files:
+    grafana_kubernetes_files:
       - common/ceph-cephfs-sc.yaml
       - common/le-prod.yaml
       - common/redirectscheme.yaml
-      - lychee/lychee-claim0-persistentvolumeclaim.yaml
-      - lychee/lychee-claim1-persistentvolumeclaim.yaml
-      - lychee/mariadb-claim0-persistentvolumeclaim.yaml
-      - lychee/mariadb-deployment.yaml
-      - lychee/mariadb-service.yaml
-      - lychee/lychee-deployment.yaml
-      - lychee/lychee-service.yaml
-      - lychee/lychee-ingress.yaml
+      - grafana/prometheus-claim0-persistentvolumeclaim.yaml
+      - grafana/prometheus-configmap-etc.yaml
+      - grafana/prometheus-deployment.yaml
+      - grafana/prometheus-service.yaml
+      - grafana/prometheus-serviceaccount.yaml
 
   tasks:
   - name: Make sure we have pip installed
     ansible.builtin.apt:
       name: python3-pip
-      update_cache: yes
 
   - name: Install dependencies to run kubernetes module
     ansible.builtin.pip:
@@ -89,17 +85,34 @@
     environment:
       KUBECONFIG: "{{ kubernetes_config_file }}"
 
-  - name: Template kubernetes files for lychee
+  - name: Template kubernetes files for grafana
     ansible.builtin.template:
       src: kubernetes/{{ item }}
       dest: "{{ kubernetes_files_dir }}/{{ item | basename}}"
-    with_items: "{{ lychee_kubernetes_files }}"
+    with_items: "{{ grafana_kubernetes_files }}"
 
-  - name: Deploy kubernetes files for lychee
+  - name: Deploy kubernetes grafana files
     kubernetes.core.k8s:
       state: present
       src: "{{ kubernetes_files_dir }}/{{ item | basename}}"
       namespace: default
-    with_items: "{{ lychee_kubernetes_files }}"
+    with_items: "{{ grafana_kubernetes_files }}"
+    environment:
+      KUBECONFIG: "{{ kubernetes_config_file }}"
+
+  - name: Copy grafana-helm
+    ansible.builtin.copy:
+      src: kubernetes/grafana/grafana-helm
+      dest: "{{ kubernetes_files_dir }}/"
+
+  - name: Install grafana using the chart copied
+    kubernetes.core.helm:
+      name: grafana
+      chart_ref: "{{ kubernetes_files_dir }}/grafana-helm"
+      release_namespace: default
+      values:
+        fqdn: "{{ grafana_domain_name }}"
+        grafana_admin_user: "{{ grafana_admin_user }}"
+        grafana_admin_pass: "{{ grafana_admin_pass }}"
     environment:
       KUBECONFIG: "{{ kubernetes_config_file }}"

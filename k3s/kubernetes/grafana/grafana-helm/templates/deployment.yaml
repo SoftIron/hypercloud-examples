@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "grafana-helm.fullname" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "grafana-helm.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "grafana-helm.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "grafana-helm.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image }}"
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          ports:
+            - name: {{ .Chart.Name }}
+              containerPort: {{ .Values.service.port }}
+          resources:
+            limits:
+              memory: "{{ .Values.resources.limits.memory}}"
+              cpu: "{{ .Values.resources.limits.cpu}}"
+            requests: 
+              memory: "{{ .Values.resources.requests.memory}}"
+              cpu: "{{ .Values.resources.requests.cpu}}"
+
+          volumeMounts:
+            - mountPath: /var/lib/grafana
+              name: grafana-storage
+
+            - mountPath: /etc/grafana/provisioning/datasources
+              name: grafana-datasources-volume
+              readOnly: false
+
+            - mountPath: /etc/grafana
+              name: grafana-etc-volume
+              readOnly: false
+
+            - mountPath: /etc/grafana/provisioning/dashboards
+              name: grafana-dashboards-provider-volume
+              readOnly: false
+              
+            - name: grafana-dashboard-templates-volume
+              mountPath: /var/lib/grafana/dashboards
+
+
+      volumes:
+
+        - name: grafana-storage
+          emptyDir: {}
+
+        - name: grafana-etc-volume
+          configMap:
+              defaultMode: 420
+              name: grafana-configmap-etc
+
+        - name: grafana-datasources-volume
+          configMap:
+              defaultMode: 420
+              name: grafana-configmap-datasources
+
+        - name: grafana-dashboards-provider-volume
+          configMap:
+              defaultMode: 420
+              name: grafana-configmap-dashboards-provider
+              
+        - name: grafana-dashboard-templates-volume
+          configMap:
+              defaultMode: 420
+              name: grafana-configmap-dashboard-templates
