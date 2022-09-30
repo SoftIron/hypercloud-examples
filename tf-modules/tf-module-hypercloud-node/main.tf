@@ -20,6 +20,8 @@ resource "opennebula_virtual_machine" "instance" {
   group       = data.opennebula_group.group.name
   permissions = "660"
 
+  hard_shutdown = true
+
   context = {
     SSH_PUBLIC_KEY = var.ssh_key
     NETWORK      = "YES"
