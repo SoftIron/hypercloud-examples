@@ -47,6 +47,8 @@ resource "opennebula_virtual_machine" "instance" {
     listen = "0.0.0.0"
   }
 
+  sched_requirements = "ARCH=\"x86_64\""
+
   nic {
     network_id      = var.network_id
     security_groups = var.security_groups
