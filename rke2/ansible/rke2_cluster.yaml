@@ -44,6 +44,21 @@
         name: rke2
       vars:
         role_function: bootstrap
+    - name: fetch kubeconfig
+      ansible.builtin.fetch:
+        src: /etc/rancher/rke2/rke2.yaml
+        dest: output/kubeconfig.yaml
+        flat: yes
+      delegate_to: "{{ groups['rke2_bootstrap'][0] }}"
+      run_once: true
+    - name: rewrite kubeconfig IP to external IP
+      lineinfile:
+        path: output/kubeconfig.yaml
+        search_string: '127.0.0.1'
+        line: "    server: https://{{ hostvars[groups['rke2_server'][0]].ansible_default_ipv4.address }}:6443"
+      delegate_to: localhost
+      run_once: true
+      become: false
   become: true
 
 - name: add remaining rke2 servers
