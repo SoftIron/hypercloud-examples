@@ -1,0 +1,64 @@
+---
+- name: Setup Load Balancers
+  hosts: rke2_loadbalancers
+  tasks:
+  - name: Install HAProxy
+    ansible.builtin.apt:
+      update_cache: yes
+      name: haproxy
+      state: present
+
+  - name: Collect IP addresses of all nodes
+    ansible.builtin.set_fact:
+      servers: "{{ groups['rke2_server'] | map('extract', hostvars, ['ansible_host']) }}"
+      agents: "{{ groups['rke2_agents'] | map('extract', hostvars, ['ansible_host']) }}"
+
+  - name: Create HAProxy configuration from template
+    ansible.builtin.template:
+      src: haproxy.cfg.j2
+      dest: /etc/haproxy/haproxy.cfg
+    notify: Restart HAProxy
+
+  handlers:
+  - name: Restart HAProxy
+    ansible.builtin.systemd:
+      name: haproxy
+      state: restarted
+
+- name: bootstrap RKE2 cluster on first Server Node
+  hosts: rke2_server
+  roles:
+    - rke2
+  vars:
+    role_function: bootstrap
+  become: true
+  # delegate_to: "{{ groups['rke2_server'][0] }}"
+  # run_once: true
+
+- name: add rke2 nodes
+  hosts: rke2_agents
+  tasks:
+    - include_role:
+        name: rke2
+      vars:
+        role_function: worker
+  become: true
+
+- name: destroy node
+  hosts: rke2_agents
+  roles:
+    - rke2
+  vars:
+    role_function: destroy_worker
+  tags: [never, destroy]
+  become: true
+
+- name: destroy cluster
+  hosts: rke2_server
+  roles:
+    - rke2
+  vars:
+    role_function: destroy_cluster
+  tags: [never, destroy]
+  become: true
+

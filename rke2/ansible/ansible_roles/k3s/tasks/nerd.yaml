@@ -1,0 +1,20 @@
+---
+- name: check for nerdctl
+  shell: which nerdctl
+  failed_when: false
+  changed_when: false
+  register: nerdctl_exists
+
+- block:
+    - name: download latest nerdctl release
+      get_url:
+        url: "{{ nerd_latest_url }}"
+        dest: /tmp/nerd.tar.gz
+        force: true
+    
+    - name: unpack and install nerdctl
+      unarchive:
+        src: /tmp/nerd.tar.gz
+        dest: /usr/local/bin/
+        remote_src: true
+  when: nerdctl_exists.rc != 0

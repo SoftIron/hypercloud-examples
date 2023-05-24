@@ -1,0 +1,46 @@
+---
+- shell: 
+    executable: "{{ bin | default('/bin/bash') }}"
+    cmd: "{{ script }}"
+  register: undelegated_shellscript
+  failed_when: false
+  changed_when: undelegated_shellscript.rc != 0
+  become: "{{ ss_become | default(true) }}"
+  when: delegation is not defined
+
+- shell: 
+    executable: "{{ bin | default('/bin/bash') }}"
+    cmd: "{{ script }}"
+  register: delegated_shellscript
+  failed_when: false
+  changed_when: delegated_shellscript.rc != 0
+  delegate_to: "{{ delegation }}"
+  become: "{{ ss_become | default(true) }}"
+  when: delegation is defined
+
+- set_fact:
+    shellscript: "{{ undelegated_shellscript }}"
+  when: delegation is not defined
+
+- set_fact:
+    shellscript: "{{ delegated_shellscript }}"
+  when: delegation is defined
+
+- debug: 
+    msg:
+      - "{{ shellscript.stdout_lines }}"
+      - "{{ shellscript.stderr_lines }}"
+  when:
+    (output|default(true)) and
+    (shellscript.stdout_lines != [] or
+     shellscript.stderr_lines != [])
+
+- name: notify handlers
+  command: /bin/true
+  when:
+    - notifiers is defined
+    - shellscript.changed
+  notify: "{{ notifiers }}"
+
+- fail:
+  when: shellscript.rc == 100

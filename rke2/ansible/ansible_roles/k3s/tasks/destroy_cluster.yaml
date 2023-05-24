@@ -1,0 +1,17 @@
+---
+- name: uninstall rke2
+  shell:
+    executable: /bin/bash
+    cmd: |
+      ret=0
+      if [[ -s /usr/local/bin/rke2-uninstall.sh ]]; then
+        /usr/local/bin/rke2-killall.sh
+        /usr/local/bin/rke2-uninstall.sh
+        echo "Removed cluster." && ret=1
+      fi
+      exit $ret
+  failed_when: false
+  register: uninstall_rke2
+  changed_when: uninstall_rke2.rc == 1
+
+# Remove helm?

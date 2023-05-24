@@ -1,0 +1,53 @@
+global
+    maxconn 4000
+
+    daemon
+    pidfile /var/run/haproxy.pid
+    user haproxy
+    group haproxy
+
+    log /dev/log local0
+    stats socket /var/lib/haproxy/stats
+
+defaults
+    mode http
+    timeout connect 5000ms
+    timeout client 50000ms
+    timeout server 50000ms
+
+    log global
+    option httplog
+
+    # never fail on address resolution
+    default-server init-addr last,libc,none
+
+
+frontend rke2
+  bind *:80
+  mode http
+  default_backend http_nginx_pool
+
+frontend rke2-ssl
+  bind *:443
+  mode tcp
+  option tcplog
+  default_backend https_nginx_pool
+
+backend http_nginx_pool
+  mode http
+{% for ip in servers %}
+  server server80_{{ loop.index }} {{ ip }}:80 check
+{% endfor %}
+{% for ip in agents %}
+  server agent80_{{ loop.index }} {{ ip }}:80 check
+{% endfor %}
+
+backend https_nginx_pool
+  mode tcp
+  balance source
+{% for ip in servers %}
+  server server443_{{ loop.index }} {{ ip }}:443 check
+{% endfor %}
+{% for ip in agents %}
+  server agent443_{{ loop.index }} {{ ip }}:443 check
+{% endfor %}

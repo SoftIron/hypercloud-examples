@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: ./kompose convert
+    kompose.version: 1.26.0 (40646f47)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: lychee
+  name: lychee
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: lychee
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: ./kompose convert
+        kompose.version: 1.26.0 (40646f47)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: lychee
+    spec:
+      dnsPolicy: ClusterFirst
+      containers:
+        - env:
+            - name: DB_DATABASE
+              value: lychee
+            - name: DB_HOST
+              value: mariadb
+            - name: DB_PASSWORD
+              value: dbpassword
+            - name: DB_PORT
+              value: "3306"
+            - name: DB_USERNAME
+              value: lychee
+            - name: PGID
+              value: "1000"
+            - name: PUID
+              value: "1000"
+            - name: TZ
+              value: Australia/Melbourne
+          image: lscr.io/linuxserver/lychee:latest
+          name: lychee
+          ports:
+            - containerPort: 80
+          resources: {}
+          volumeMounts:
+            - mountPath: /config
+              name: lychee-claim0
+            - mountPath: /pictures
+              name: lychee-claim1
+      restartPolicy: Always
+      volumes:
+        - name: lychee-claim0
+          persistentVolumeClaim:
+            claimName: lychee-claim0
+        - name: lychee-claim1
+          persistentVolumeClaim:
+            claimName: lychee-claim1
+status: {}
