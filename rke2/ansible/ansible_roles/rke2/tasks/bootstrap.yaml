@@ -47,12 +47,12 @@
       enabled: true
       name: rke2-server
     register: rke2_service
-    until: rke2_service.status.ActiveState == "active"
+    until: rke2_service.status is defined and rke2_service.status.ActiveState == "active"
     retries: 10
     delay: 10
 
   # - debug:
-  #     msg: "{{ result }}"
+  #     msg: "{{ rke2-server }}"
 
   # - name: Wait for RKE2 to start
   #   ansible.builtin.shell: systemctl status rke2-server
