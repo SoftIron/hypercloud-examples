@@ -48,7 +48,7 @@
       name: rke2-server
     register: rke2_service
     until: rke2_service.status is defined and rke2_service.status.ActiveState == "active"
-    retries: 10
+    retries: 30
     delay: 10
 
   # - debug:
