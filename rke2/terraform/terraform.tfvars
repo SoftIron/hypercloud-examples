@@ -1,6 +1,6 @@
 rke2_loadbalancers = 1
-rke2_servers       = 1
-rke2_agents        = 2
+rke2_servers       = 3
+rke2_agents        = 3
 
 ssh_keys = "$USER[SSH_PUBLIC_KEY]"
 

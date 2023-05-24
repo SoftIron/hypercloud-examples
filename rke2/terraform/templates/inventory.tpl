@@ -6,6 +6,9 @@ ansible_ssh_user=root
 ${server_names[index]} ansible_host=${ip}
 %{ endfor ~}
 
+[rke2_bootstrap]
+${server_names[0]} ansible_host=${server_ips[0]}
+
 [rke2_agents]
 %{ for index, ip in agent_ips ~}
 ${agent_names[index]} ansible_host=${ip}

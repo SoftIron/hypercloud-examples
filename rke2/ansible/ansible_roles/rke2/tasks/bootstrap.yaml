@@ -1,0 +1,89 @@
+---
+
+- name: check for rke2
+  shell: /usr/bin/which rke2
+  register: rke2_installed
+  failed_when: false
+  changed_when: false
+  
+- block:
+  # - name: set RKE2 Cluster Join PSK
+  #   ansible.builtin.set_fact:
+  #     join_token: "{{ lookup('ansible.builtin.password', '/dev/null', chars=['ascii_lowercase', 'digits'], length=8) }}"
+  #     join_url: "https://{{ hostvars[inventory_hostname].ansible_default_ipv4.address }}:9345"
+  #   when: join_token is undefined
+  - debug:
+      msg:
+        - "Join Token: {{ join_token }}"
+        - "Join URL: {{ join_url }}"
+
+  - name: add node config directory
+    ansible.builtin.file:
+      path: /etc/rancher/rke2/
+      state: directory
+      mode: '0755'
+
+  - name: add node config file
+    ansible.builtin.template:
+      src: rke2/config.yaml.j2
+      dest: /etc/rancher/rke2/config.yaml
+      owner: root
+      group: root
+      mode: '0644'
+
+  - name: download rke2 installer
+    get_url:
+      url: https://get.rke2.io
+      dest: /tmp/rke2_bootstrap.sh
+  
+  - name: run rke2 installer
+    environment:
+      INSTALL_RKE2_TYPE: server
+    shell: /bin/sh /tmp/rke2_bootstrap.sh
+
+  - name: enable and start RKE2 Server
+    ansible.builtin.systemd:
+      state: started
+      enabled: true
+      name: rke2-server
+    register: rke2_service
+    until: rke2_service.status.ActiveState == "active"
+    retries: 10
+    delay: 10
+
+  # - debug:
+  #     msg: "{{ result }}"
+
+  # - name: Wait for RKE2 to start
+  #   ansible.builtin.shell: systemctl status rke2-server
+  #   until: rke2_started.rc == 0
+  #   register: rke2_started
+  #   retries: 20
+  #   delay: 10
+      
+  when: rke2_installed.rc != 0
+
+- name: check for helm
+  shell: /usr/bin/which helm
+  register: helm_installed
+  failed_when: false
+  changed_when: false
+
+- block:
+    - name: download helm installer
+      get_url:
+        url: https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+        dest: /tmp/get_helm.sh
+    - name: run helm installer
+      include_role:
+        name: shellscript
+      vars:
+        script: |
+          /bin/bash /tmp/get_helm.sh
+  when: helm_installed.rc != 0
+
+- name: set environment variable
+  copy:
+    dest: /etc/profile.d/99-kubectl.sh
+    content: |
+      export KUBECONFIG=/etc/rancher/rke2/rke2.yaml

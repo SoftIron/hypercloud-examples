@@ -38,12 +38,12 @@ scripts:
 This will create all the VMs needed, and an Ansible inventory file located on
 `ansible/inventory/hosts`
 
-## Installing K3s
+## Installing RKE2
 
 With the VMs deployed, you can run the following Ansible playbook from
 the `ansible/` folder:
 
-    ansible-playbook -i inventory/hosts k3s_cluster.yaml
+    ansible-playbook -i inventory/hosts rke2_cluster.yaml
 
 This command will take a while. It will configure all the Kubernetes nodes.
 

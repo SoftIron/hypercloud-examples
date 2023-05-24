@@ -1,0 +1,38 @@
+---
+# RKE2 includes ContainerD
+
+- name: check node in cluster
+  shell: |
+    kubectl get node {{ inventory_hostname }}
+  failed_when: false
+  changed_when: false
+  delegate_to: "{{ groups['rke2_server'][0] }}"
+  register: node_exists
+
+- name: Install worker
+  block:
+  - name: add node config directory
+    ansible.builtin.file:
+      path: /etc/rancher/rke2/
+      state: directory
+      mode: '0755'
+
+  - name: add node config file
+    ansible.builtin.template:
+      src: rke2/config.yaml.j2
+      dest: /etc/rancher/rke2/config.yaml
+      owner: root
+      group: root
+      mode: '0644'
+
+  - name: add node to cluster
+    shell: |
+      curl --connect-timeout 10 -sfL https://get.rke2.io | INSTALL_RKE2_TYPE="agent" sh - 
+
+  - name: enable and start RKE2 Agent
+    ansible.builtin.systemd:
+      state: started
+      enabled: true
+      name: rke2-agent
+
+  when: node_exists.rc != 0

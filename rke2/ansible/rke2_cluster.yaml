@@ -26,18 +26,54 @@
       state: restarted
 
 - name: bootstrap RKE2 cluster on first Server Node
-  hosts: rke2_server
-  roles:
-    - rke2
-  vars:
-    role_function: bootstrap
+  hosts: 
+    - rke2_bootstrap
+  tasks:
+    - name: set RKE2 Cluster Join PSK
+      ansible.builtin.set_fact:
+        join_token: "{{ lookup('ansible.builtin.password', '/dev/null', chars=['ascii_lowercase', 'digits'], length=8) }}"
+        join_url: "https://{{ hostvars[inventory_hostname].ansible_default_ipv4.address }}:9345"
+      when: join_token is undefined
+      delegate_to: "{{ groups['rke2_bootstrap'][0] }}"
+      run_once: true
+    - debug:
+        msg:
+          - "Join Token: {{ join_token }}"
+          - "Join URL: {{ join_url }}"
+    - include_role:
+        name: rke2
+      vars:
+        role_function: bootstrap
   become: true
-  # delegate_to: "{{ groups['rke2_server'][0] }}"
-  # run_once: true
+
+- name: add remaining rke2 servers
+  hosts: rke2_server
+  tasks:
+    - name: set RKE2 Cluster Join PSK
+      ansible.builtin.set_fact:
+        join_token: "{{ hostvars[groups['rke2_bootstrap'][0]].join_token }}"
+        join_url: "{{ hostvars[groups['rke2_bootstrap'][0]].join_url }}"
+    - debug:
+        msg:
+          - "Join Token: {{ join_token }}"
+          - "Join URL: {{ join_url }}"
+    - include_role:
+        name: rke2
+      vars:
+        role_function: bootstrap
+  become: true
 
 - name: add rke2 nodes
   hosts: rke2_agents
   tasks:
+    - name: set RKE2 Cluster Join PSK
+      ansible.builtin.set_fact:
+        join_token: "{{ hostvars[groups['rke2_bootstrap'][0]].join_token }}"
+        join_url: "{{ hostvars[groups['rke2_bootstrap'][0]].join_url }}"
+    - debug:
+        msg:
+          - "Join Token: {{ join_token }}"
+          - "Join URL: {{ join_url }}"
     - include_role:
         name: rke2
       vars:
