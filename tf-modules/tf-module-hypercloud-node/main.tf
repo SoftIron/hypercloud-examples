@@ -58,6 +58,4 @@ resource "opennebula_virtual_machine" "instance" {
       security_groups = nic.value["net_sgs"]
     }
   }
-
-  sched_requirements = "(ARCH = \"x86_64\") & (HYPERVISOR = \"kvm\")"
 }
