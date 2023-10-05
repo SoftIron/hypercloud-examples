@@ -14,4 +14,7 @@
   register: uninstall_rke2
   changed_when: uninstall_rke2.rc == 1
 
-# Remove helm?
+- name: remove Helm binary
+  ansible.builtin.file:
+    path: /usr/local/bin/helm
+    state: absent

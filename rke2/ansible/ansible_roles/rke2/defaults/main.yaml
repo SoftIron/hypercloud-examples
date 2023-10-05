@@ -1,2 +1,1 @@
-nerd_latest_url: "https://github.com/containerd/nerdctl/releases/download/v0.22.0/nerdctl-0.22.0-linux-{{ rke2_arch | default('amd64') }}.tar.gz"
-#https://github.com/containerd/nerdctl/releases/download/v0.22.0/nerdctl-0.22.0-linux-amd64.tar.gz
+rke2_arch: amd64

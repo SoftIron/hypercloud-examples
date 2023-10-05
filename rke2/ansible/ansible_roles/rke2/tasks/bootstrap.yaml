@@ -35,7 +35,7 @@
     get_url:
       url: https://get.rke2.io
       dest: /tmp/rke2_bootstrap.sh
-  
+ 
   - name: run rke2 installer
     environment:
       INSTALL_RKE2_TYPE: server

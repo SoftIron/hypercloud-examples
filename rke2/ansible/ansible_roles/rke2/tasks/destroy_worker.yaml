@@ -1,4 +1,12 @@
 ---
+- name: delete from cluster
+  shell: |
+    kubectl delete node {{ inventory_hostname }}
+  when: uninstall_rke2_agent.changed
+  delegate_to: "{{ groups['rke2_server'][0] }}"
+  failed_when: false
+  changed_when: false
+
 - name: uninstall agent
   shell:
     executable: /bin/bash
@@ -12,11 +20,3 @@
   failed_when: false
   register: uninstall_rke2_agent
   changed_when: uninstall_rke2_agent.rc == 1
-
-- name: delete from cluster
-  shell: |
-    kubectl delete node {{ inventory_hostname }}
-  when: uninstall_rke2_agent.changed
-  delegate_to: "{{ groups['rke2_server'][0] }}"
-  failed_when: false
-  changed_when: false
