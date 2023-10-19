@@ -1,0 +1,43 @@
+# Default values for grafana-helm.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+namespace: default
+
+fqdn: grafana.softiron.cloud
+grafana-template: hypercloud
+grafana_admin_user: grafana
+grafana_admin_pass: insecure
+image: grafana/grafana
+imagePullPolicy: "IfNotPresent"
+
+grafana_auth_anon_access: "true"
+grafana_dashboard_templates_dir: "hypercloud"
+
+nameOverride: ""
+fullnameOverride: ""
+
+resources:
+  limits:
+    memory: "1Gi"
+    cpu: "1000m"
+  requests: 
+    memory: 500M
+    cpu: "500m"
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: false
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+service:
+  port: 3000
+
+
+

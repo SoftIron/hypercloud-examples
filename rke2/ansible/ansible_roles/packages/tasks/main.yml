@@ -1,0 +1,49 @@
+---
+- name: (redhat) install requested packages - {{ packages_list }}
+  yum:
+    name: "{{ packages_list }}"
+    state: "{{ packages_state | default('present') }}"
+    disable_plugin: "{{ yum_disable_plugins }}" 
+    disable_excludes: 'all'
+    disablerepo: "{{ yum_disablerepo | default('') }}"
+    disable_gpg_check: "{{ yum_disablegpg | default(False) }}"
+  register: packages_change
+  when: ansible_os_family == 'RedHat'
+
+- name: (redhat) remove unwanted packages - {{ packages_unwanted }}
+  yum:
+    name: "{{ packages_unwanted }}"
+    state: absent
+    disable_plugin: "{{ yum_disable_plugins }}"
+  when: 
+    - packages_unwanted is defined
+    - ansible_os_family == 'RedHat'
+
+- name: (debian) install requested packages - {{ packages_list }}
+  apt:
+    name: "{{ packages_list }}"
+    state: "{{ packages_state | default('present') }}"
+  register: packages_change
+  when: 
+    - (ansible_os_family == 'Debian' or  ansible_os_family == 'SoftIron GNU/Linux')
+    - not packages_deb
+
+- name: (debian) install requested packages - {{ packages_list }}
+  apt:
+    deb: "{{ pkg }}"
+    state: "{{ packages_state | default('present') }}"
+  register: packages_change
+  when: 
+    - (ansible_os_family == 'Debian' or  ansible_os_family == 'SoftIron GNU/Linux')
+    - packages_deb
+  loop: "{{ packages_list }}"
+  loop_control:
+    loop_var: pkg
+
+- name: (debian) remove unwanted packages - {{ packages_unwanted }}
+  apt:
+    name: "{{ packages_unwanted }}"
+    state: absent
+  when: 
+    - packages_unwanted is defined
+    - (ansible_os_family == 'Debian' or  ansible_os_family == 'SoftIron GNU/Linux')

@@ -1,0 +1,5 @@
+packages_common: []
+packages_group: []
+packages_host: []
+packages_repos: []
+packages_deb: false

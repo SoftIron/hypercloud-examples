@@ -1,0 +1,115 @@
+---
+- name: Setup Load Balancers
+  hosts: rke2_loadbalancers
+  tasks:
+  - name: Install HAProxy
+    ansible.builtin.apt:
+      update_cache: yes
+      name: haproxy
+      state: present
+
+  - name: Collect IP addresses of all nodes
+    ansible.builtin.set_fact:
+      servers: "{{ groups['rke2_server'] | map('extract', hostvars, ['ansible_host']) }}"
+      agents: "{{ groups['rke2_agents'] | map('extract', hostvars, ['ansible_host']) }}"
+
+  - name: Create HAProxy configuration from template
+    ansible.builtin.template:
+      src: haproxy.cfg.j2
+      dest: /etc/haproxy/haproxy.cfg
+    notify: Restart HAProxy
+
+  handlers:
+  - name: Restart HAProxy
+    ansible.builtin.systemd:
+      name: haproxy
+      state: restarted
+
+- name: bootstrap RKE2 cluster on first Server Node
+  hosts: 
+    - rke2_bootstrap
+  tasks:
+    - name: set RKE2 Cluster Join PSK
+      ansible.builtin.set_fact:
+        join_token: "{{ lookup('ansible.builtin.password', '/dev/null', chars=['ascii_lowercase', 'digits'], length=8) }}"
+        join_url: "https://{{ hostvars[inventory_hostname].ansible_default_ipv4.address }}:9345"
+      when: join_token is undefined
+      delegate_to: "{{ groups['rke2_bootstrap'][0] }}"
+      run_once: true
+    - debug:
+        msg:
+          - "Join Token: {{ join_token }}"
+          - "Join URL: {{ join_url }}"
+    - include_role:
+        name: rke2
+      vars:
+        role_function: bootstrap
+    - name: fetch kubeconfig
+      ansible.builtin.fetch:
+        src: /etc/rancher/rke2/rke2.yaml
+        dest: output/kubeconfig.yaml
+        flat: yes
+      delegate_to: "{{ groups['rke2_bootstrap'][0] }}"
+      run_once: true
+    - name: rewrite kubeconfig IP to external IP
+      lineinfile:
+        path: output/kubeconfig.yaml
+        search_string: '127.0.0.1'
+        line: "    server: https://{{ hostvars[groups['rke2_server'][0]].ansible_default_ipv4.address }}:6443"
+      delegate_to: localhost
+      run_once: true
+      become: false
+  become: true
+
+- name: add remaining rke2 servers
+  hosts: rke2_server
+  tasks:
+    - name: set RKE2 Cluster Join PSK
+      ansible.builtin.set_fact:
+        join_token: "{{ hostvars[groups['rke2_bootstrap'][0]].join_token }}"
+        join_url: "{{ hostvars[groups['rke2_bootstrap'][0]].join_url }}"
+    - debug:
+        msg:
+          - "Join Token: {{ join_token }}"
+          - "Join URL: {{ join_url }}"
+    - include_role:
+        name: rke2
+      vars:
+        role_function: bootstrap
+  become: true
+
+- name: add rke2 nodes
+  hosts: rke2_agents
+  tasks:
+    - name: set RKE2 Cluster Join PSK
+      ansible.builtin.set_fact:
+        join_token: "{{ hostvars[groups['rke2_bootstrap'][0]].join_token }}"
+        join_url: "{{ hostvars[groups['rke2_bootstrap'][0]].join_url }}"
+    - debug:
+        msg:
+          - "Join Token: {{ join_token }}"
+          - "Join URL: {{ join_url }}"
+    - include_role:
+        name: rke2
+      vars:
+        role_function: worker
+  become: true
+
+- name: destroy node
+  hosts: rke2_agents
+  roles:
+    - rke2
+  vars:
+    role_function: destroy_worker
+  tags: [never, destroy]
+  become: true
+
+- name: destroy cluster
+  hosts: rke2_server
+  roles:
+    - rke2
+  vars:
+    role_function: destroy_cluster
+  tags: [never, destroy]
+  become: true
+

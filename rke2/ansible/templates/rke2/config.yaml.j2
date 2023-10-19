@@ -1,0 +1,4 @@
+{%if hostvars[groups['rke2_server'][0]].ansible_default_ipv4.address != hostvars[inventory_hostname].ansible_default_ipv4.address  %}
+server: {{ join_url }}
+{% endif %}
+token: {{ join_token }}

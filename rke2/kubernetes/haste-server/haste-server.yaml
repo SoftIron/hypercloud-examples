@@ -1,0 +1,119 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: haste-server
+spec:
+  selector:
+    matchLabels:
+      app: haste-server
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: haste-server
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - haste-server
+              topologyKey: kubernetes.io/hostname
+      containers:
+      - name: haste-server
+        image: ghcr.io/palvarez89/haste-server:s3-and-ui
+        env:
+        - name: STORAGE_TYPE
+          value: "amazon-s3"
+        - name: STORAGE_AWS_ENDPOINT
+          value: &endpoint "{{ haste_s3_endpoint }}"
+        - name: STORAGE_AWS_BUCKET
+          value: &bucket "haste"
+        - name: STORAGE_AWS_KEY_ID
+          value: &key-id "{{ haste_s3_key_id }}"
+        - name: STORAGE_AWS_KEY_SECRET
+          value: &key-secret "{{ haste_s3_key_secret }}"
+        - name: STORAGE_AWS_PATH_STYLE
+          value: "true"
+        ports:
+        - containerPort: 7777
+        imagePullPolicy: Always
+      initContainers:
+      - name: init-bucket
+        image: amazon/aws-cli
+        env:
+        - name: STORAGE_AWS_ENDPOINT
+          value: *endpoint
+        - name: STORAGE_AWS_BUCKET
+          value: *bucket
+        - name: AWS_ACCESS_KEY_ID
+          value: *key-id
+        - name: AWS_SECRET_ACCESS_KEY
+          value: *key-secret
+        command: ['aws', "--endpoint-url=$(STORAGE_AWS_ENDPOINT)", 's3api', 'create-bucket', '--bucket=$(STORAGE_AWS_BUCKET)']
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: haste-server
+  namespace: default
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 7777
+  selector:
+    app: haste-server
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: haste-server-ingress
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+    traefik.ingress.kubernetes.io/router.middlewares: default-redirectscheme@kubernetescrd
+    kubernetes.io/ingress.class: traefik
+
+spec:
+  rules:
+    - host: {{ haste_domain_name }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name:  haste-server
+                port:
+                  number: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: haste-server-ingress-with-ssl
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+
+spec:
+  rules:
+    - host: {{ haste_domain_name }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name:  haste-server
+                port:
+                  number: 80
+  tls:
+  - hosts:
+    - {{ haste_domain_name }}
+    secretName: {{ haste_domain_name }}-tls

@@ -1,0 +1,20 @@
+---
+# This is a sample configmap that helps define a Ceph configuration as required
+# by the CSI plugins.
+
+# Sample ceph.conf available at
+# https://github.com/ceph/ceph/blob/master/src/sample.ceph.conf Detailed
+# documentation is available at
+# https://docs.ceph.com/en/latest/rados/configuration/ceph-conf/
+apiVersion: v1
+kind: ConfigMap
+data:
+  ceph.conf: |
+    {% filter indent(width=4) %}
+    {{- common_ceph_conf }}
+    {% endfilter %}
+
+  # keyring is a required key and its value should be empty
+  keyring: |
+metadata:
+  name: ceph-config
