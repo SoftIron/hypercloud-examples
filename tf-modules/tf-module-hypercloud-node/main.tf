@@ -20,6 +20,8 @@ resource "opennebula_virtual_machine" "instance" {
   group       = data.opennebula_group.group.name
   permissions = "660"
 
+  hard_shutdown = true
+
   context = {
     SSH_PUBLIC_KEY = var.ssh_key
     NETWORK      = "YES"
@@ -34,7 +36,7 @@ resource "opennebula_virtual_machine" "instance" {
 
   disk {
     image_id = var.image_id
-    size     = 20000
+    size     = 20480
     target   = "vda"
   }
 
@@ -44,6 +46,8 @@ resource "opennebula_virtual_machine" "instance" {
     type   = "VNC"
     listen = "0.0.0.0"
   }
+
+  sched_requirements = "ARCH=\"x86_64\""
 
   nic {
     network_id      = var.network_id
